@@ -1,3 +1,4 @@
+from os import fstat
 import subprocess  # nosec
 from typing import Any
 
@@ -48,9 +49,11 @@ class Checksum:
         with open(CHECKSUM_FILE, 'rb') as filename:
             checksum_file_content = filename.read()
 
+        content_len = str(len(checksum_file_content) + 1)
         upload_url = f'https://uploads.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/releases/{latest_release_id}/assets?name={CHECKSUM_FILE}'  # noqa
         headers = GITHUB_HEADERS.copy()
         headers['Content-Type'] = 'text/plain'
+        headers['Content-Length'] = content_len
 
         try:
             response = requests.post(
